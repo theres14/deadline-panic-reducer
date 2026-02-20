@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Breakdown | Panic Reducer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9d7cfd;
+            --secondary: #00d4ff;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --safe: #4ade80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+        }
+
+        .subtask-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .subtask-item:hover {
+            border-color: var(--primary);
+        }
+
+        .subtask-item.completed {
+            opacity: 0.6;
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .checkbox-custom.checked {
+            background: var(--primary);
+        }
+
+        .checkbox-custom.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+
+        .subtask-content {
+            flex-grow: 1;
+        }
+
+        .subtask-title {
+            font-weight: 600;
+            display: block;
+        }
+
+        .subtask-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .add-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .add-row input {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            color: white;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .actions {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-focus {
+            background: var(--secondary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Smart Task Breakdown</h1>
+            <p id="taskNameDisplay">Project Name</p>
+        </header>
+
+        <div class="card">
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span>Overall Completion</span>
+                    <span id="percentLabel">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="subtask-list" id="subtaskList">
+                <!-- Subtasks will be injected here -->
+            </div>
+
+            <div class="add-row">
+                <input type="text" id="newSubtaskName" placeholder="Add a custom subtask...">
+                <button class="btn-add" id="addSubtaskBtn">+ Add</button>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="dashboard.html" class="btn-back">← Dashboard</a>
+            <a href="focus-timer.html" class="btn-focus">Start Focus Session</a>
+        </div>
+    </div>
+
+    <script>
+        let subtasks = [
+            { id: 1, title: 'Initial Research', time: '1h 30m', completed: false },
+            { id: 2, title: 'Structure Outline', time: '45m', completed: false },
+            { id: 3, title: 'Drafting Content', time: '4h 0m', completed: false },
+            { id: 4, title: 'Review & Edit', time: '1h 0m', completed: false },
+            { id: 5, title: 'Final Polish', time: '30m', completed: false }
+        ];
+
+        function renderSubtasks() {
+            const list = document.getElementById('subtaskList');
+            list.innerHTML = '';
+
+            subtasks.forEach(task => {
+                const item = document.createElement('div');
+                item.className = `subtask-item ${task.completed ? 'completed' : ''}`;
+                item.innerHTML = `
+                    <div class="checkbox-custom ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+                    <div class="subtask-content">
+                        <span class="subtask-title">${task.title}</span>
+                        <span class="subtask-meta">Estimated: ${task.time}</span>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+
+            updateProgress();
+        }
+
+        function toggleTask(id) {
+            const task = subtasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderSubtasks();
+            }
+        }
+
+        function updateProgress() {
+            const completed = subtasks.filter(t => t.completed).length;
+            const percent = Math.round((completed / subtasks.length) * 100);
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('percentLabel').innerText = percent + '%';
+        }
+
+        document.getElementById('addSubtaskBtn').onclick = () => {
+            const nameInput = document.getElementById('newSubtaskName');
+            if (nameInput.value.trim()) {
+                subtasks.push({
+                    id: Date.now(),
+                    title: nameInput.value.trim(),
+                    time: '1h (def)',
+                    completed: false
+                });
+                nameInput.value = '';
+                renderSubtasks();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const taskId = params.get('id');
+            const deadlines = JSON.parse(localStorage.getItem('deadlines') || '[]');
+            const currentTask = deadlines.find(t => t.id == taskId);
+
+            if (currentTask) {
+                document.getElementById('taskNameDisplay').innerText = currentTask.name;
+            }
+
+            renderSubtasks();
+        });
+    </script>
+</body>
+
+</html>

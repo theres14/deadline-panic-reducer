@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Timer | Panic Reducer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9d7cfd;
+            --secondary: #00d4ff;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-container {
+            text-align: center;
+            background: var(--surface);
+            backdrop-filter: blur(15px);
+            padding: 4rem;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .timer-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-header p {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        .circle-timer {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 800;
+            z-index: 1;
+        }
+
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        circle {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+
+        .bg-circle {
+            stroke: rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-circle {
+            stroke: var(--primary);
+            stroke-dasharray: 754;
+            stroke-dashoffset: 754;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-start {
+            background: var(--primary);
+            color: white;
+            width: 140px;
+        }
+
+        .btn-pause {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: none;
+        }
+
+        .btn-reset {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .session-stats {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 0.3rem;
+        }
+
+        .motivation {
+            margin-top: 2rem;
+            font-style: italic;
+            color: var(--secondary);
+            min-height: 1.5rem;
+        }
+
+        .back-link {
+            margin-top: 3rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="timer-container">
+        <div class="timer-header">
+            <h1>Focus Session</h1>
+            <p>Slay your deadlines, one block at a time.</p>
+        </div>
+
+        <div class="circle-timer">
+            <svg>
+                <circle cx="125" cy="125" r="120" class="bg-circle"></circle>
+                <circle cx="125" cy="125" r="120" class="progress-circle" id="progressCircle"></circle>
+            </svg>
+            <div class="timer-display" id="timeDisplay">25:00</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn">Start Focus</button>
+            <button class="btn btn-pause" id="pauseBtn">Pause</button>
+            <button class="btn btn-reset" id="resetBtn">Reset</button>
+        </div>
+
+        <div class="motivation" id="motivationText">"The secret of getting ahead is getting started."</div>
+
+        <div class="session-stats">
+            <div class="stat">Sessions Completed <span id="sessionCount">0</span></div>
+            <div class="stat">Total Focus Time <span id="totalTime">0h 0m</span></div>
+        </div>
+    </div>
+
+    <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+
+    <script>
+        let timeLeft = 25 * 60;
+        let timerId = null;
+        let sessions = 0;
+        let isPaused = false;
+
+        const display = document.getElementById('timeDisplay');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const progressCircle = document.getElementById('progressCircle');
+        const motivationText = document.getElementById('motivationText');
+
+        const quotes = [
+            "Keep going, you're doing great!",
+            "Focus on the process, not the outcome.",
+            "Stay in the flow state.",
+            "One step at a time.",
+            "Your future self will thank you."
+        ];
+
+        function updateDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+            const total = 25 * 60;
+            const offset = 754 - (754 * (timeLeft / total));
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function startTimer() {
+            if (timerId) return;
+
+            startBtn.style.display = 'none';
+            pauseBtn.style.display = 'inline-block';
+
+            timerId = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerId);
+                    timerId = null;
+                    sessions++;
+                    document.getElementById('sessionCount').innerText = sessions;
+                    alert("Focus session complete! Take a break.");
+                    resetTimer();
+                }
+            }, 1000);
+
+            // Cycle quotes
+            motivationText.innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        }
+
+        function pauseTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            startBtn.innerText = 'Resume';
+            startBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+        }
+
+        function resetTimer() {
+            clearInterval(timerId);
+            timerId = null;
+            timeLeft = 25 * 60;
+            updateDisplay();
+            startBtn.innerText = 'Start Focus';
+            startBtn.style.display = 'inline-block';
+            pauseBtn.style.display = 'none';
+        }
+
+        startBtn.onclick = startTimer;
+        pauseBtn.onclick = pauseTimer;
+        resetBtn.onclick = resetTimer;
+
+        updateDisplay();
+    </script>
+</body>
+
+</html>

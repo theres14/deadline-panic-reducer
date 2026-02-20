@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panic Analysis | Panic Reducer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #9d7cfd;
+            --secondary: #00d4ff;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --safe: #4ade80;
+            --moderate: #fbbf24;
+            --critical: #ff4d4d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .card {
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 8px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 30px rgba(157, 124, 253, 0.2);
+        }
+
+        .formula {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .suggestion-list {
+            list-style: none;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .suggestion-item i {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .nav-btns {
+            margin-top: 3rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--glass-border);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Panic Analysis</h1>
+        <p id="taskTitle">Task Name</p>
+    </header>
+
+    <div class="container">
+        <!-- Score Card -->
+        <div class="card score-card">
+            <div class="score-display">
+                <div class="score-circle" id="scoreValue">8.5</div>
+                <h3>Urgency Intensity</h3>
+                <p id="urgencyLabel" style="color: var(--critical); font-weight: 700; margin-top: 0.5rem;">CRITICAL</p>
+            </div>
+            <div class="formula">
+                Panic Score = (Diff × Imp) / Time Remaining
+            </div>
+        </div>
+
+        <!-- Suggestion Card -->
+        <div class="card suggestion-card">
+            <h3>Strategic Suggestions</h3>
+            <ul class="suggestion-list" id="suggestionList">
+                <li class="suggestion-item">🚀 <strong>Start Now:</strong> This task has high drag. Every hour counts.
+                </li>
+                <li class="suggestion-item">✂️ <strong>Break it down:</strong> Use our smart breakdown tool to split
+                    this task.</li>
+                <li class="suggestion-item">🤝 <strong>Delegate:</strong> If possible, move the research phase to a
+                    teammate.</li>
+            </ul>
+        </div>
+
+        <!-- Chart Card -->
+        <div class="card full-width">
+            <h3>Relative Urgency Comparison</h3>
+            <div style="height: 300px; margin-top: 1rem;">
+                <canvas id="urgencyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-btns">
+        <a href="dashboard.html" class="btn btn-secondary">Back to Dashboard</a>
+        <a href="breakdown.html" class="btn btn-primary" id="breakdownBtn">Break into Subtasks</a>
+        <a href="focus-timer.html" class="btn btn-primary" style="background: var(--secondary);">Start Focus Session</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const taskId = params.get('id');
+            const deadlines = JSON.parse(localStorage.getItem('deadlines') || '[]');
+            const currentTask = deadlines.find(t => t.id == taskId) || deadlines[deadlines.length - 1];
+
+            if (currentTask) {
+                document.getElementById('taskTitle').innerText = currentTask.name;
+                document.getElementById('scoreValue').innerText = currentTask.score;
+
+                const score = parseFloat(currentTask.score);
+                const label = document.getElementById('urgencyLabel');
+                const circle = document.querySelector('.score-circle');
+
+                if (score > 8) {
+                    label.innerText = 'CRITICAL';
+                    label.style.color = 'var(--critical)';
+                    circle.style.borderColor = 'var(--critical)';
+                } else if (score > 5) {
+                    label.innerText = 'MODERATE';
+                    label.style.color = 'var(--moderate)';
+                    circle.style.borderColor = 'var(--moderate)';
+                } else {
+                    label.innerText = 'SAFE';
+                    label.style.color = 'var(--safe)';
+                    circle.style.borderColor = 'var(--safe)';
+                }
+
+                document.getElementById('breakdownBtn').href = `breakdown.html?id=${currentTask.id}`;
+            }
+
+            // Urgency Chart
+            const ctx = document.getElementById('urgencyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: deadlines.map(t => t.name.substring(0, 15) + '...'),
+                    datasets: [{
+                        label: 'Panic Score',
+                        data: deadlines.map(t => parseFloat(t.score) || 0),
+                        backgroundColor: deadlines.map(t => {
+                            const s = parseFloat(t.score);
+                            return s > 8 ? '#ff4d4d' : s > 5 ? '#fbbf24' : '#4ade80';
+                        }),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 10, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

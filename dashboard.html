@@ -4,17 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Deadline Panic Reducer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Dashboard | Panic Reducer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --accent: #ec4899;
-            --bg-dark: #070b14;
-            --sidebar-bg: rgba(15, 23, 42, 0.8);
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --primary: #9d7cfd;
+            --secondary: #00d4ff;
+            --danger: #ff4d4d;
+            --warning: #fbbf24;
+            --safe: #4ade80;
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.5);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -25,319 +30,362 @@
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: white;
-            display: flex;
+            background-color: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
+            display: flex;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
+        /* --- Sidebar --- */
+        aside {
+            width: 260px;
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(10px);
-            border-right: 1px solid var(--card-border);
+            border-right: 1px solid var(--glass-border);
             padding: 2rem;
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            z-index: 100;
         }
 
-        .sidebar-logo {
+        .logo {
             font-size: 1.5rem;
-            font-weight: 600;
+            font-weight: 800;
             margin-bottom: 3rem;
             background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             -webkit-text-fill-color: transparent;
         }
 
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
         .nav-item {
-            padding: 1rem;
             margin-bottom: 0.5rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #94a3b8;
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s;
         }
 
-        .nav-item:hover,
-        .nav-item.active {
-            background: rgba(99, 102, 241, 0.1);
-            color: white;
-            border: 1px solid rgba(99, 102, 241, 0.2);
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(157, 124, 253, 0.1);
+            color: var(--primary);
         }
 
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 1.2rem;
         }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 3rem;
-            background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+        /* --- Main Content --- */
+        main {
+            flex-grow: 1;
+            margin-left: 260px;
+            padding: 2rem 3rem;
         }
 
-        .header {
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 3rem;
         }
 
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 600;
+        .welcome h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
         }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--card-bg);
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid var(--card-border);
+        .welcome p {
+            color: var(--text-muted);
         }
 
-        .profile-img {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent), var(--secondary));
-            border-radius: 50%;
-        }
-
-        /* Dashboard Grid */
-        .dashboard-sections {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-        }
-
-        .section-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--card-border);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-            opacity: 0;
-            animation: slideIn 0.6s forwards ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(99, 102, 241, 0.3);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .btn-add {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
             color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
         }
 
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(157, 124, 253, 0.3);
+        }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-card h4 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* --- Panic Meter --- */
+        .panic-meter-container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        .panic-gauge {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panic-fill {
+            height: 100%;
+            width: 65%;
+            background: linear-gradient(to right, var(--safe), var(--warning), var(--danger));
+            transition: width 1s ease-in-out;
+        }
+
+        .panic-label {
+            font-size: 1.2rem;
             font-weight: 600;
         }
 
-        .badge-pending {
-            background: rgba(236, 72, 153, 0.1);
-            color: var(--accent);
-            border: 1px solid rgba(236, 72, 153, 0.2);
+        .panic-status {
+            color: var(--danger);
         }
 
-        .badge-ongoing {
-            background: rgba(168, 85, 247, 0.1);
-            color: var(--secondary);
-            border: 1px solid rgba(168, 85, 247, 0.2);
+        /* --- Task List --- */
+        .task-list-section h3 {
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
         }
 
         .task-list {
-            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .task-item {
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            justify-content: space-between;
+            background: var(--card);
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 100px;
             align-items: center;
+            transition: 0.3s;
         }
 
-        .task-item:last-child {
-            border-bottom: none;
+        .task-item:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .task-info h4 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
+        .task-info h5 {
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
         }
 
         .task-info p {
             font-size: 0.85rem;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
-        .deadline {
-            color: var(--accent);
-            font-size: 0.85rem;
+        .badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 600;
+            text-align: center;
+            display: inline-block;
         }
 
-        /* Hidden Sections */
-        .content-section {
-            display: none;
+        .badge-red {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
         }
 
-        .content-section.active {
-            display: block;
+        .badge-yellow {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+        }
+
+        .badge-green {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+
+        .time-left {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .priority-score {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .task-item {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <nav class="sidebar">
-        <div class="sidebar-logo">Panic Reducer</div>
-        <div class="nav-item active" onclick="showSection('overview')">
-            <span>🏠</span> Dashboard
-        </div>
-        <div class="nav-item" onclick="showSection('assignment')">
-            <span>📝</span> Assignments
-        </div>
-        <div class="nav-item" onclick="showSection('ongoing')">
-            <span>⚡</span> Ongoing Tasks
-        </div>
-        <div style="margin-top: auto;" class="nav-item" onclick="window.location.href='login.html'">
-            <span>🚪</span> Logout
-        </div>
-    </nav>
+    <aside>
+        <div class="logo">PanicReducer</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+            <li class="nav-item"><a href="calendar.html" class="nav-link">Calendar</a></li>
+            <li class="nav-item"><a href="focus-timer.html" class="nav-link">Focus Timer</a></li>
+            <li class="nav-item"><a href="breakdown.html" class="nav-link">Breakdown</a></li>
+            <li class="nav-item"><a href="history.html" class="nav-link">History</a></li>
+        </ul>
+        <ul class="nav-menu" style="margin-top: auto;">
+            <li class="nav-item"><a href="settings.html" class="nav-link">Settings</a></li>
+            <li class="nav-item"><a href="help.html" class="nav-link">Help</a></li>
+        </ul>
+    </aside>
 
-    <main class="main-content">
-        <div class="header">
-            <h1 id="page-title">Welcome Back!</h1>
-            <div class="user-profile">
-                <div class="profile-img"></div>
-                <span>Antigravity</span>
+    <main>
+        <header>
+            <div class="welcome">
+                <h1>Welcome back, Alex!</h1>
+                <p>You have 3 critical deadlines approaching today.</p>
+            </div>
+            <a href="add-deadline.html" class="btn-add">+ Add Deadline</a>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Deadlines</h4>
+                <div class="value">12</div>
+            </div>
+            <div class="stat-card">
+                <h4>Upcoming (3d)</h4>
+                <div class="value">5</div>
+            </div>
+            <div class="stat-card">
+                <h4>Overdue</h4>
+                <div class="value" style="color: var(--danger);">2</div>
+            </div>
+            <div class="stat-card">
+                <h4>Completed</h4>
+                <div class="value">28</div>
             </div>
         </div>
 
-        <!-- Overview Section -->
-        <div id="overview-section" class="content-section active">
-            <div class="dashboard-sections">
-                <!-- Assignment Card -->
-                <div class="section-card" style="animation-delay: 0.1s">
-                    <div class="section-header">
-                        <span class="section-title">New Assignments</span>
-                        <span class="status-badge badge-pending">3 Pending</span>
+        <div class="panic-meter-container">
+            <div class="panic-label">Current Panic Level: <span class="panic-status">HIGH</span></div>
+            <div class="panic-gauge">
+                <div class="panic-fill" id="panicFill"></div>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Urgency detected. We recommend starting a 25-min
+                focus session now.</p>
+        </div>
+
+        <section class="task-list-section">
+            <h3>Active Deadlines</h3>
+            <div class="task-list" id="taskList">
+                <!-- Mock Tasks -->
+                <div class="task-item">
+                    <div class="task-info">
+                        <h5>Finish Quarterly Report</h5>
+                        <p>Research & Data Analysis</p>
                     </div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <div class="task-info">
-                                <h4>UI Design System</h4>
-                                <p>Figma Prototype for Client</p>
-                            </div>
-                            <span class="deadline">2h left</span>
-                        </li>
-                        <li class="task-item">
-                            <div class="task-info">
-                                <h4>API Integration</h4>
-                                <p>Frontend Connectivity</p>
-                            </div>
-                            <span class="deadline">5h left</span>
-                        </li>
-                    </ul>
+                    <div class="time-left">4h 20m</div>
+                    <div class="priority-score">9.2 / 10</div>
+                    <div><span class="badge badge-red">In Progress</span></div>
+                    <div style="text-align: right;"><a href="panic-analysis.html"
+                            style="color: var(--primary);">View</a></div>
                 </div>
-
-                <!-- Ongoing Card -->
-                <div class="section-card" style="animation-delay: 0.2s">
-                    <div class="section-header">
-                        <span class="section-title">Ongoing Projects</span>
-                        <span class="status-badge badge-ongoing">2 Active</span>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h5>Client Presentation</h5>
+                        <p>Design & Graphics</p>
                     </div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <div class="task-info">
-                                <h4>React Application</h4>
-                                <p>Portfolio Site Build</p>
-                            </div>
-                            <span class="deadline">Next Mon</span>
-                        </li>
-                    </ul>
+                    <div class="time-left">1d 12h</div>
+                    <div class="priority-score">7.5 / 10</div>
+                    <div><span class="badge badge-yellow">Not Started</span></div>
+                    <div style="text-align: right;"><a href="panic-analysis.html"
+                            style="color: var(--primary);">View</a></div>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <h5>Weekly Sync Preparation</h5>
+                        <p>Internal Team Update</p>
+                    </div>
+                    <div class="time-left">2d 8h</div>
+                    <div class="priority-score">4.1 / 10</div>
+                    <div><span class="badge badge-green">Done</span></div>
+                    <div style="text-align: right;"><a href="panic-analysis.html"
+                            style="color: var(--primary);">View</a></div>
                 </div>
             </div>
-        </div>
-
-        <!-- Assignments Detailed Section -->
-        <div id="assignment-section" class="content-section">
-            <div class="section-card">
-                <h2>Pending Assignments</h2>
-                <p style="color: #64748b; margin: 1rem 0;">Detailed view of all upcoming deadlines.</p>
-                <!-- Reuse task-list pattern or add more details -->
-            </div>
-        </div>
-
-        <!-- Ongoing Detailed Section -->
-        <div id="ongoing-section" class="content-section">
-            <div class="section-card">
-                <h2>Active Workstreams</h2>
-                <p style="color: #64748b; margin: 1rem 0;">Currently tracking progress on these items.</p>
-            </div>
-        </div>
+        </section>
     </main>
 
     <script>
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
+        // Dashboard Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const panicFill = document.getElementById('panicFill');
+            // Animate panic meter on load
+            setTimeout(() => {
+                panicFill.style.width = '78%';
+            }, 500);
 
-            // Deactivate all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Show current section
-            document.getElementById(sectionId + '-section').classList.add('active');
-
-            // Activate current nav item
-            event.currentTarget.classList.add('active');
-
-            // Update title
-            const title = sectionId.charAt(0).toUpperCase() + sectionId.slice(1);
-            document.getElementById('page-title').innerText = title + ' Overview';
-        }
+            // Load data from localStorage (Logic for future expansion)
+            const deadlines = JSON.parse(localStorage.getItem('deadlines') || '[]');
+            if (deadlines.length > 0) {
+                // updateDashboard(deadlines);
+            }
+        });
     </script>
 </body>
 

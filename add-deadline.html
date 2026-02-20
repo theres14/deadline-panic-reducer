@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Deadline | Panic Reducer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9d7cfd;
+            --secondary: #00d4ff;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(15, 23, 42, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            background: var(--surface);
+            backdrop-filter: blur(15px);
+            padding: 3rem;
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: rgba(157, 124, 253, 0.05);
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .range-value {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 1.5rem;
+        }
+
+        .submission-area {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panic-preview {
+            text-align: right;
+        }
+
+        .panic-preview .score {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .panic-preview .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(157, 124, 253, 0.3);
+        }
+
+        .btn-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <div class="header">
+            <h1>Add New Deadline</h1>
+            <p>Tell us what's on your mind. We'll handle the math.</p>
+        </div>
+
+        <form id="deadlineForm">
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" id="taskName" placeholder="e.g., Final Year Project Report" required>
+                </div>
+
+                <div class="form-group full">
+                    <label for="description">Brief Description</label>
+                    <textarea id="description" rows="3" placeholder="What needs to be done?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="dueTime">Due Time</label>
+                    <input type="time" id="dueTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="estHours">Estimated Hours Needed</label>
+                    <input type="number" id="estHours" min="1" placeholder="e.g., 10" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="completion">Current Completion %</label>
+                    <input type="number" id="completion" min="0" max="100" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="difficulty">Difficulty Level (1-5)</label>
+                    <div class="range-container">
+                        <input type="range" id="difficulty" min="1" max="5" value="3">
+                        <span class="range-value" id="diffVal">3</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="importance">Importance Level (1-5)</label>
+                    <div class="range-container">
+                        <input type="range" id="importance" min="1" max="5" value="3">
+                        <span class="range-value" id="impVal">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submission-area">
+                <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+                <div class="panic-preview">
+                    <div class="label">Panic Score</div>
+                    <div class="score" id="scorePreview">--</div>
+                </div>
+                <button type="submit" class="btn-submit">Calculate & Add</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('deadlineForm');
+        const diffSlider = document.getElementById('difficulty');
+        const impSlider = document.getElementById('importance');
+        const diffVal = document.getElementById('diffVal');
+        const impVal = document.getElementById('impVal');
+        const scorePreview = document.getElementById('scorePreview');
+
+        // Update display values
+        diffSlider.oninput = function () { diffVal.innerText = this.value; calculatePanic(); }
+        impSlider.oninput = function () { impVal.innerText = this.value; calculatePanic(); }
+
+        // Dynamic Panic Score Calculation
+        function calculatePanic() {
+            const difficulty = parseInt(diffSlider.value);
+            const importance = parseInt(impSlider.value);
+            const dueDate = document.getElementById('dueDate').value;
+            const dueTime = document.getElementById('dueTime').value;
+            const estHours = parseInt(document.getElementById('estHours').value) || 1;
+            const completion = parseInt(document.getElementById('completion').value) || 0;
+
+            if (!dueDate || !dueTime) {
+                scorePreview.innerText = "--";
+                return;
+            }
+
+            const deadline = new Date(`${dueDate}T${dueTime}`);
+            const now = new Date();
+            const timeRemaining = (deadline - now) / (1000 * 60 * 60); // In hours
+
+            if (timeRemaining <= 0) {
+                scorePreview.innerText = "CRITICAL";
+                scorePreview.style.color = "#ff4d4d";
+                return;
+            }
+
+            // Formula: (Difficulty * Importance * Remaining Workload) / Time Remaining
+            const remainingWork = estHours * (1 - (completion / 100));
+            let score = (difficulty * importance * remainingWork) / timeRemaining;
+
+            // Normalize score for display (0-10)
+            score = Math.min(score * 2, 10).toFixed(1);
+
+            scorePreview.innerText = score;
+
+            // Color coding
+            if (score > 8) scorePreview.style.color = "#ff4d4d";
+            else if (score > 5) scorePreview.style.color = "#fbbf24";
+            else scorePreview.style.color = "#4ade80";
+        }
+
+        // Add event listeners for score preview
+        ['dueDate', 'dueTime', 'estHours', 'completion'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculatePanic);
+        });
+
+        form.onsubmit = (e) => {
+            e.preventDefault();
+
+            const task = {
+                id: Date.now(),
+                name: document.getElementById('taskName').value,
+                description: document.getElementById('description').value,
+                deadline: `${document.getElementById('dueDate').value}T${document.getElementById('dueTime').value}`,
+                estHours: document.getElementById('estHours').value,
+                difficulty: diffSlider.value,
+                importance: impSlider.value,
+                completion: document.getElementById('completion').value,
+                score: scorePreview.innerText
+            };
+
+            const existing = JSON.parse(localStorage.getItem('deadlines') || '[]');
+            existing.push(task);
+            localStorage.setItem('deadlines', JSON.stringify(existing));
+
+            window.location.href = `panic-analysis.html?id=${task.id}`;
+        };
+    </script>
+</body>
+
+</html>

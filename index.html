@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadline Panic Reducer | Turn Stress into Strategy</title>
+    <meta name="description"
+        content="Stop feeling overwhelmed. Use the Deadline Panic Reducer to transform your deadlines into clear actionable steps.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9d7cfd;
+            --primary-dark: #7a58e6;
+            --secondary: #00d4ff;
+            --danger: #ff4d4d;
+            --safe: #4ade80;
+            --bg: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Background Elements --- */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            filter: blur(100px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.15;
+            animation: rotate 20s infinite linear;
+        }
+
+        .blob-1 {
+            top: -100px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            bottom: -100px;
+            left: -100px;
+            background: linear-gradient(135deg, var(--danger), var(--primary));
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.1) rotate(180deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        /* --- Navigation --- */
+        nav {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding: 8rem 5% 5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 90vh;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            max-width: 900px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            box-shadow: 0 10px 30px rgba(157, 124, 253, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(157, 124, 253, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+            margin-left: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Features Section --- */
+        .features {
+            padding: 8rem 5%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+        }
+
+        /* --- Problem Statement --- */
+        .problem {
+            padding: 5rem 5%;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        .problem h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 4rem 5%;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+        }
+
+        /* --- Auth Box --- */
+        .auth-container {
+            margin-top: 2rem;
+            max-width: 400px;
+            width: 100%;
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            display: none;
+            flex-direction: column;
+            gap: 1.2rem;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-header h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .auth-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .auth-input-group label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .auth-input-group input {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .auth-input-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: rgba(157, 124, 253, 0.05);
+        }
+
+        .auth-footer {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .auth-footer span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .btn-auth-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-auth-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(157, 124, 253, 0.3);
+        }
+
+        .forgot-pass {
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-align: right;
+            cursor: pointer;
+            margin-top: -0.5rem;
+            text-decoration: none;
+            display: block;
+        }
+
+        .forgot-pass:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 768px) {
+            .hero {
+                padding-top: 5rem;
+            }
+
+            .btn-secondary {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+                text-align: center;
+            }
+
+            .btn-primary {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <nav>
+        <div class="logo">PanicReducer</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Turn Deadline <span>Panic</span> into <span>Clear Action</span>.</h1>
+            <p>The smart assistant that prioritizes your workload, manages your stress, and helps you beat the clock
+                without burning out.</p>
+            <div class="cta-group">
+                <button id="getStartedBtn" class="btn btn-primary">Get Started Now</button>
+            </div>
+
+            <!-- Login / Signup Box -->
+            <div id="authBox" class="auth-container">
+                <div class="auth-header">
+                    <h3 id="authTitle">Login</h3>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                    <a href="#" class="forgot-pass" id="forgotPass">Forgot password?</a>
+                </div>
+
+                <button class="btn-auth-submit" id="authSubmitBtn">Login</button>
+
+                <div class="auth-footer" id="authFooter">
+                    Don't have an account? <span id="authToggle">Sign up</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="problem">
+            <h2>Feeling overwhelmed?</h2>
+            <p>Too many deadlines at once? We've all been there. It's time to stop panicking and start planning.</p>
+        </section>
+
+        <section class="features" id="features">
+            <div class="feature-card">
+                <span class="feature-icon">🧮</span>
+                <h3>Smart Priority Calculator</h3>
+                <p>Advanced algorithm based on difficulty, importance, and time remaining to tell you exactly what to do
+                    first.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3>Panic Level Meter</h3>
+                <p>Visual gauge of your current stress level. Lower the meter by completing focused work sessions.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🛠️</span>
+                <h3>Auto Task Breakdown</h3>
+                <p>Big projects? We split them into bite-sized actionable steps automatically.</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">⏱️</span>
+                <h3>Focus Timer</h3>
+                <p>Integrated Pomodoro sessions with ambient sounds to keep you in the flow state.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Deadline Panic Reducer. Built for peace of mind.</p>
+    </footer>
+
+    <script>
+        // Auth Box Logic
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const authBox = document.getElementById('authBox');
+        const authTitle = document.getElementById('authTitle');
+        const authSubmitBtn = document.getElementById('authSubmitBtn');
+        const authToggle = document.getElementById('authToggle');
+        const authFooter = document.getElementById('authFooter');
+
+        const forgotPass = document.getElementById('forgotPass');
+
+        let isLogin = true;
+
+        getStartedBtn.onclick = () => {
+            authBox.style.display = authBox.style.display === 'flex' ? 'none' : 'flex';
+            if (authBox.style.display === 'flex') {
+                authBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        authToggle.onclick = () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                authTitle.innerText = 'Login';
+                authSubmitBtn.innerText = 'Login';
+                authFooter.innerHTML = `Don't have an account? <span id="authToggle">Sign up</span>`;
+                forgotPass.style.display = 'block';
+            } else {
+                authTitle.innerText = 'Create Account';
+                authSubmitBtn.innerText = 'Sign Up';
+                authFooter.innerHTML = `Already have an account? <span id="authToggle">Login</span>`;
+                forgotPass.style.display = 'none';
+            }
+            // Re-assign toggle event after innerHTML change
+            document.getElementById('authToggle').onclick = authToggle.onclick;
+        };
+
+        forgotPass.onclick = (e) => {
+            e.preventDefault();
+            alert('Password reset link has been sent to your registered email (Mock).');
+        };
+
+        authSubmitBtn.onclick = () => {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if (!user || !pass) {
+                alert('Please enter both username and password.');
+                return;
+            }
+
+            // Mock auth - redirect to dashboard
+            window.location.href = 'dashboard.html';
+        };
+
+        // Basic scroll reveal animation
+        const revealEntries = document.querySelectorAll('.feature-card, .problem');
+
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, observerOptions);
+
+        revealEntries.forEach(el => {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(30px)";
+            el.style.transition = "all 0.8s cubic-bezier(0.22, 1, 0.36, 1)";
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
