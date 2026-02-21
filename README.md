@@ -123,6 +123,8 @@ https://github.com/user-attachments/assets/41245a51-bd77-464a-9a23-506215ce53d2
 3. "Create panic score calculation logic using JavaScript"
 4. "Explain application data flow in short" 
 
+**Percentage of AI-generated code:** [Approximately 40%]
+
 **Human Contributions:**
 - Overall architecture design and feature planning
 - Implementation of task management and panic score logic
