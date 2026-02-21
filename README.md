@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="./img.png" alt="Project Banner" width="100%">
+  <img 
+    src="https://github.com/user-attachments/assets/8094634f-a9bd-4d2a-9774-567f07e5eb3b" 
+    alt="Project Banner" 
+    width="100%">
 </p>
 
 # Deadline Panic Reducer 🎯
