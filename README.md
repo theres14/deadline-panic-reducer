@@ -91,70 +91,50 @@ Fig 3. Focus timer page with 25-minute Pomodoro session.
 
 The Deadline Panic Reducer follows a fully client-side architecture where all operations are handled within the browser. The user interacts with the interface built using HTML and CSS, while JavaScript processes inputs, calculates the panic score, manages tasks, and controls the focus timer. All task details, deadlines, progress data, and session information are stored using LocalStorage or IndexedDB, eliminating the need for a backend server. The data flow moves from user input to JavaScript processing, then to browser storage, and finally updates the UI dynamically, ensuring fast performance and seamless interaction.
 
-**Application Workflow:**
-
-![Workflow](docs/workflow.png)
-*Add caption explaining your workflow*
 
 ---
 
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
 
-*Explain what the video demonstrates - key features, user flow, technical highlights*
 
-### Additional Demos
-[Add any extra demo materials/links - Live site, APK download, online demo, etc.]
+https://github.com/user-attachments/assets/41245a51-bd77-464a-9a23-506215ce53d2
+
 
 ---
 
 ## AI Tools Used (Optional - For Transparency Bonus)
 
-If you used AI tools during development, document them here for transparency:
 
-**Tool Used:** [e.g., GitHub Copilot, v0.dev, Cursor, ChatGPT, Claude]
 
-**Purpose:** [What you used it for]
-- Example: "Generated boilerplate React components"
-- Example: "Debugging assistance for async functions"
-- Example: "Code review and optimization suggestions"
+**Tool Used:** [ChatGPT, Antigravity]
+
+**Purpose:** 
+1. Assisted in project ideation and feature planning
+2. Helped design system architecture and data flow
+3. Supported panic score logic formulation
+4. Provided debugging guidance and code improvement suggestions
+5. Offered UI inspiration, layout structuring, and visual design enhancement
 
 **Key Prompts Used:**
-- "Create a REST API endpoint for user authentication"
-- "Debug this async function that's causing race conditions"
-- "Optimize this database query for better performance"
-
-**Percentage of AI-generated code:** [Approximately X%]
+1. "Generate project description for a deadline panic reducer website"
+2. "Design system architecture for a client-side productivity web app"
+3. "Create panic score calculation logic using JavaScript"
+4. "Explain application data flow in short" 
 
 **Human Contributions:**
-- Architecture design and planning
-- Custom business logic implementation
-- Integration and testing
-- UI/UX design decisions
+- Overall architecture design and feature planning
+- Implementation of task management and panic score logic
+- Integration of LocalStorage for data persistence
+- UI/UX layout and styling decisions
+- Testing, debugging, and final deployment setup
 
-*Note: Proper documentation of AI usage demonstrates transparency and earns bonus points in evaluation!*
 
----
 
 ## Team Contributions
+-[Theres Mariya Tiby]: Frontend development, panic score logic implementation, UI/UX design, integration of browser storage, testing, and documentation.
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
-- [Name 3]: [Specific contributions - e.g., UI/UX design, Testing, Documentation, etc.]
-
----
-
-## License
-
-This project is licensed under the [LICENSE_NAME] License - see the [LICENSE](LICENSE) file for details.
-
-**Common License Options:**
-- MIT License (Permissive, widely used)
-- Apache 2.0 (Permissive with patent grant)
-- GPL v3 (Copyleft, requires derivative works to be open source)
-
----
+-[Ashna Paul]: Feature planning and requirement analysis, task management module implementation, focus timer development, debugging support, and presentation/documentation preparation.
 
 Made with ❤️ at TinkerHub
