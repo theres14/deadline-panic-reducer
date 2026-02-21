@@ -25,7 +25,6 @@ Deadline Panic Reducer is a web-based productivity tool that helps users manage 
 ### The Problem statement
 Many people experience stress and anxiety when handling multiple deadlines.
 This project aims to:
-
 1. Reduce last-minute panic
 2. Improve time planning
 3. Increase productivity
@@ -39,7 +38,6 @@ It works by:
 * Breaking Large Tasks into Smaller Subtasks to make work feel manageable.
 * Providing Focus Timers to encourage structured work sessions.
 * Visualizing Workload and Progress to reduce uncertainty and improve planning.
-
 By transforming overwhelming deadlines into clear, actionable steps, the system helps users stay calm, organized, and productive.
 
 
